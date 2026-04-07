@@ -1,0 +1,233 @@
+services:
+  nginx:
+    container_name: ${PROJECT_NAME}-nginx
+    env_file: ".env"
+    image: solyto/api-nginx:latest
+    user: nginx
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    volumes:
+      - ./nginx/api.conf.template:/etc/nginx/templates/api.conf.template
+      - ./storage/:/var/www/storage/
+    networks:
+      - api
+
+  php:
+    container_name: ${PROJECT_NAME}-php
+    env_file: ".env"
+    image: solyto/api-php:latest
+    user: www-data
+    environment:
+      DB_USERNAME_FILE: /run/secrets/db_user
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DAV_DB_USERNAME_FILE: /run/secrets/dav_db_user
+      DAV_DB_PASSWORD_FILE: /run/secrets/dav_db_password
+      APP_KEY_FILE: /run/secrets/app_key
+      SOLYTO_BOT_WEBHOOK_TOKEN_FILE: /run/secrets/solyto_bot_webhook_token
+      SOLYTO_BOT_TELEGRAM_TOKEN_FILE: /run/secrets/solyto_bot_telegram_token
+      HARDCOVER_API_KEY_FILE: /run/secrets/hardcover_api_key
+      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      VAPID_PUBLIC_KEY_FILE: /run/secrets/vapid_public_key
+      VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
+      MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
+      BGG_API_KEY_FILE: /run/secrets/bgg_api_key
+    volumes:
+      - ./storage/:/var/www/storage/
+      - ./php/app.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
+    secrets:
+      - db_user
+      - db_password
+      - dav_db_user
+      - dav_db_password
+      - app_key
+      - solyto_bot_webhook_token
+      - solyto_bot_telegram_token
+      - hardcover_api_key
+      - openai_api_key
+      - mailgun_secret
+      - vapid_private_key
+      - vapid_public_key
+      - bgg_api_key
+    restart: unless-stopped
+    networks:
+      - api
+      - db
+      - public
+
+  dav:
+    container_name: ${PROJECT_NAME}-dav
+    env_file: ".env"
+    image: solyto/api-php:latest
+    user: www-data
+    environment:
+      DB_USERNAME_FILE: /run/secrets/db_user
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DAV_DB_USERNAME_FILE: /run/secrets/dav_db_user
+      DAV_DB_PASSWORD_FILE: /run/secrets/dav_db_password
+      APP_KEY_FILE: /run/secrets/app_key
+    volumes:
+      - ./storage/:/var/www/storage/
+      - ./php/dav.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
+    secrets:
+      - db_user
+      - db_password
+      - dav_db_user
+      - dav_db_password
+      - app_key
+    restart: unless-stopped
+    networks:
+      - api
+      - db
+      - public
+
+  queue:
+    container_name: ${PROJECT_NAME}-queue
+    env_file: ".env"
+    image: solyto/api-php:latest
+    user: www-data
+    command: php artisan queue:work --tries=3 --timeout=300
+    environment:
+      DB_USERNAME_FILE: /run/secrets/db_user
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DAV_DB_USERNAME_FILE: /run/secrets/dav_db_user
+      DAV_DB_PASSWORD_FILE: /run/secrets/dav_db_password
+      APP_KEY_FILE: /run/secrets/app_key
+      SOLYTO_BOT_WEBHOOK_TOKEN_FILE: /run/secrets/solyto_bot_webhook_token
+      SOLYTO_BOT_TELEGRAM_TOKEN_FILE: /run/secrets/solyto_bot_telegram_token
+      HARDCOVER_API_KEY_FILE: /run/secrets/hardcover_api_key
+      VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
+      MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
+    volumes:
+      - ./storage/:/var/www/storage/
+      - ./php/queue.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
+    secrets:
+      - db_user
+      - db_password
+      - dav_db_user
+      - dav_db_password
+      - app_key
+      - solyto_bot_webhook_token
+      - solyto_bot_telegram_token
+      - hardcover_api_key
+      - mailgun_secret
+      - vapid_private_key
+    restart: unless-stopped
+    networks:
+      - api
+      - db
+      - public
+
+  app:
+    container_name: ${PROJECT_NAME}-app
+    env_file: '.env'
+    image: solyto/app:latest
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    networks:
+      - public
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION}
+    container_name: ${PROJECT_NAME}-mariadb
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+      MYSQL_USER_FILE: /run/secrets/mariadb_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    secrets:
+      - mariadb_user
+      - mariadb_password
+      - mariadb_root_password
+    networks:
+      - db
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: ${PROJECT_NAME}-postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_root_password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    secrets:
+      - postgres_root_password
+    networks:
+      - db
+    restart: unless-stopped
+
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: ${PROJECT_NAME}-redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - db
+    restart: unless-stopped
+
+volumes:
+  mariadb_data:
+  pg_data:
+  redis_data:
+
+networks:
+  api:
+    driver: bridge
+    internal: true
+
+  db:
+    driver: bridge
+    internal: true
+
+  public:
+
+
+secrets:
+  mariadb_user:
+    file: ./secrets/mariadb_user
+  mariadb_password:
+    file: ./secrets/mariadb_password
+  mariadb_root_password:
+    file: ./secrets/mariadb_root_password
+  postgres_root_password:
+    file: ./secrets/postgres_root_password
+  db_user:
+    file: ./secrets/db_user
+  db_password:
+    file: ./secrets/db_password
+  dav_db_user:
+    file: ./secrets/dav_db_user
+  dav_db_password:
+    file: ./secrets/dav_db_password
+  app_key:
+    file: ./secrets/app_key
+  solyto_bot_webhook_token:
+    file: ./secrets/solyto_bot_webhook_token
+  solyto_bot_telegram_token:
+    file: ./secrets/solyto_bot_telegram_token
+  hardcover_api_key:
+    file: ./secrets/hardcover_api_key
+  openai_api_key:
+    file: ./secrets/openai_api_key
+  mailgun_secret:
+    file: ./secrets/mailgun_secret
+  vapid_public_key:
+    file: ./secrets/vapid_public_key
+  vapid_private_key:
+    file: ./secrets/vapid_private_key
+  bgg_api_key:
+    file: ./secrets/bgg_api_key
