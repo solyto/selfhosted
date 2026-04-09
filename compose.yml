@@ -38,6 +38,7 @@ services:
       start_period: 10s
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_public"
       - "traefik.http.routers.api.rule=Host(`${API_DOMAIN}`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=letsencrypt"
