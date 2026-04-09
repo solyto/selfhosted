@@ -113,6 +113,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      api:
+        condition: service_healthy
     environment:
       DB_USERNAME_FILE: /run/secrets/db_user
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -147,6 +149,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      api:
+        condition: service_healthy
     environment:
       DB_USERNAME_FILE: /run/secrets/db_user
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -201,10 +205,10 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
-      MYSQL_USER_FILE: /run/secrets/mariadb_user
-      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_password
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+      MARIADB_USER_FILE: /run/secrets/mariadb_user
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
     volumes:
       - mariadb_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro

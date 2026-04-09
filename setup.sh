@@ -5,9 +5,10 @@ set -e
 echo "Cloning solyto/selfhosted..."
 git clone --depth 1 https://github.com/solyto/selfhosted.git solyto
 cd solyto
-rm -f LICENSE README.md
-
-mkdir -p solyto/api/storage/app/public solyto/api/storage/framework/{cache,sessions,views} solyto/api/storage/logs solyto/api/bootstrap/cache
+rm -f LICENSE README.md setup.sh
+mkdir -p storage
+mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
+chown -R www-data:www-data storage/
 
 echo ""
 echo "Configure domains and email for TLS certificates:"
