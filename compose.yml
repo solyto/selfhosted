@@ -31,10 +31,11 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/api/v1/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${API_DOMAIN}`)"
