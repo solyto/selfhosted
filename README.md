@@ -251,11 +251,7 @@ If you need any help setting your instance up, let us know. We are happy to help
 
 [Discord](https://discord.gg/JbNPJHG6)
 
-
-
 ---
-
-
 
 ## Licensing
 
