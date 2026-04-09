@@ -55,7 +55,7 @@ services:
       - public
 
   api:
-    container_name: ${PROJECT_NAME}-php
+    container_name: ${PROJECT_NAME}-api
     env_file: ".env"
     image: solyto/api-php:${SOLYTO_VERSION}
     user: www-data
