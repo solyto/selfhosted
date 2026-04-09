@@ -28,7 +28,13 @@ services:
     image: solyto/api-nginx:${SOLYTO_VERSION}
     user: nginx
     depends_on:
-      - php
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${API_DOMAIN}`)"
@@ -48,11 +54,18 @@ services:
       - api
       - public
 
-  php:
+  api:
     container_name: ${PROJECT_NAME}-php
     env_file: ".env"
     image: solyto/api-php:${SOLYTO_VERSION}
     user: www-data
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       DB_USERNAME_FILE: /run/secrets/db_user
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -95,6 +108,11 @@ services:
     env_file: ".env"
     image: solyto/api-php:${SOLYTO_VERSION}
     user: www-data
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
       DB_USERNAME_FILE: /run/secrets/db_user
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -122,6 +140,13 @@ services:
     image: solyto/api-php:${SOLYTO_VERSION}
     user: www-data
     command: php artisan queue:work --tries=3 --timeout=300
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       DB_USERNAME_FILE: /run/secrets/db_user
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -157,6 +182,9 @@ services:
     container_name: ${PROJECT_NAME}-app
     env_file: '.env'
     image: solyto/app:${SOLYTO_VERSION}
+    depends_on:
+      nginx:
+        condition: service_healthy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`${APP_DOMAIN}`)"
@@ -188,6 +216,11 @@ services:
     networks:
       - db
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   postgres:
     image: postgres:${POSTGRES_VERSION}
@@ -201,11 +234,19 @@ services:
       - pg_data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./init-dav.sh:/docker-entrypoint-initdb.d/init-dav.sh:ro
     secrets:
       - postgres_root_password
+      - dav_db_user
+      - dav_db_password
     networks:
       - db
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:${REDIS_VERSION}
