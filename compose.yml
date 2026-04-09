@@ -31,7 +31,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost/api/v1/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost:8080/api/v1/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -41,12 +41,12 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls.certresolver=letsencrypt"
       - "traefik.http.routers.api.service=api-svc"
-      - "traefik.http.services.api-svc.loadbalancer.server.port=80"
+      - "traefik.http.services.api-svc.loadbalancer.server.port=8080"
       - "traefik.http.routers.dav.rule=Host(`${DAV_DOMAIN}`)"
       - "traefik.http.routers.dav.entrypoints=websecure"
       - "traefik.http.routers.dav.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dav.service=dav-svc"
-      - "traefik.http.services.dav-svc.loadbalancer.server.port=81"
+      - "traefik.http.services.dav-svc.loadbalancer.server.port=8081"
     restart: unless-stopped
     volumes:
       - ./storage/:/var/www/storage/
