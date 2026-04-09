@@ -7,6 +7,22 @@ git clone --depth 1 https://github.com/solyto/selfhosted.git solyto
 cd solyto
 rm -f LICENSE README.md
 
+echo ""
+echo "Configure domains and email for TLS certificates:"
+read -rp "  API domain   (e.g. api.yourdomain.com): " API_DOMAIN
+read -rp "  App domain   (e.g. app.yourdomain.com): " APP_DOMAIN
+read -rp "  DAV domain   (e.g. dav.yourdomain.com): " DAV_DOMAIN
+read -rp "  ACME email   (e.g. you@yourdomain.com): " ACME_EMAIL
+
+sed -i \
+    -e "s|^API_DOMAIN=.*|API_DOMAIN=${API_DOMAIN}|" \
+    -e "s|^APP_DOMAIN=.*|APP_DOMAIN=${APP_DOMAIN}|" \
+    -e "s|^DAV_DOMAIN=.*|DAV_DOMAIN=${DAV_DOMAIN}|" \
+    -e "s|^ACME_EMAIL=.*|ACME_EMAIL=${ACME_EMAIL}|" \
+    .env
+
+echo ""
+
 SECRETS_DIR="./secrets"
 mkdir -p "$SECRETS_DIR"
 
@@ -68,4 +84,4 @@ write_empty "vapid_private_key"
 write_empty "bgg_api_key"
 
 echo ""
-echo "Done. Edit solyto/.env with your domains and ACME_EMAIL, then run: cd solyto && docker compose up -d"
+echo "Done. Run: cd solyto && docker compose up -d"
