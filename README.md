@@ -45,11 +45,13 @@ Solyto is relatively light in resource usage. You should be able to run it on a 
 
 **1. Configure your domains**
 
-Edit `.env` and fill in your domains:
+Edit `.env` and fill in your domains and an email address for Let's Encrypt:
 
 ```env
 API_DOMAIN=api.yourdomain.com
 APP_DOMAIN=app.yourdomain.com
+DAV_DOMAIN=dav.yourdomain.com
+ACME_EMAIL=you@yourdomain.com
 ```
 
 **2. Create secrets**
