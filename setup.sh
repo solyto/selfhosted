@@ -12,10 +12,10 @@ chown -R www-data:www-data storage/
 
 echo ""
 echo "Configure domains and email for TLS certificates:"
-read -rp "  API domain   (e.g. api.yourdomain.com): " API_DOMAIN
-read -rp "  App domain   (e.g. app.yourdomain.com): " APP_DOMAIN
-read -rp "  DAV domain   (e.g. dav.yourdomain.com): " DAV_DOMAIN
-read -rp "  ACME email   (e.g. you@yourdomain.com): " ACME_EMAIL
+read -rp "  API domain   (e.g. api.yourdomain.com): " API_DOMAIN < /dev/tty
+read -rp "  App domain   (e.g. app.yourdomain.com): " APP_DOMAIN < /dev/tty
+read -rp "  DAV domain   (e.g. dav.yourdomain.com): " DAV_DOMAIN < /dev/tty
+read -rp "  ACME email   (e.g. you@yourdomain.com): " ACME_EMAIL < /dev/tty
 
 sed -i \
     -e "s|^API_DOMAIN=.*|API_DOMAIN=${API_DOMAIN}|" \
