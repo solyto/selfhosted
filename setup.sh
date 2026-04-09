@@ -7,6 +7,8 @@ git clone --depth 1 https://github.com/solyto/selfhosted.git solyto
 cd solyto
 rm -f LICENSE README.md
 
+mkdir -p solyto/api/storage/app/public solyto/api/storage/framework/{cache,sessions,views} solyto/api/storage/logs solyto/api/bootstrap/cache
+
 echo ""
 echo "Configure domains and email for TLS certificates:"
 read -rp "  API domain   (e.g. api.yourdomain.com): " API_DOMAIN
