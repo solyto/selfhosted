@@ -30,11 +30,12 @@ Solyto is relatively light in resource usage. You should be able to run it on a 
 
 | Service    | Image              | Description                            |
 | ---------- | ------------------ | -------------------------------------- |
+| `traefik`  | `traefik`          | Reverse proxy, TLS termination         |
 | `nginx`    | `solyto/api-nginx` | Web server / reverse proxy for the API |
-| `php`      | `solyto/api-php`   | Laravel PHP-FPM application            |
+| `api`      | `solyto/api-php`   | Laravel PHP-FPM application            |
 | `dav`      | `solyto/api-php`   | WebDAV service (separate PHP config)   |
 | `queue`    | `solyto/api-php`   | Laravel queue worker                   |
-| `app`      | `solyto/app`       | Frontend app (port 3000)               |
+| `app`      | `solyto/app`       | Frontend app                           |
 | `mariadb`  | `mariadb`          | Primary database for the API           |
 | `postgres` | `postgres`         | Database for the DAV service           |
 | `redis`    | `redis`            | Cache and queue backend                |
@@ -43,7 +44,31 @@ Solyto is relatively light in resource usage. You should be able to run it on a 
 
 ## Setup
 
-**1. Configure your domains**
+You have two options regarding setup. Either go through steps manually or run our one-step-install script.
+
+### Install script
+
+```
+curl -fsSL "https://raw.githubusercontent.com/solyto/selfhosted/main/setup.sh?$(date +%s)" | bash
+```
+
+Run this command to run the install script. It will clone all relevant files to solyto/, ask you for your domains and set everything up. After doing this, all you have to do is `cd` into solyto/ and run `make start` or `docker compose up -d`.
+
+### Do things manually
+
+**1. Copy relevant files from this repository to your server**
+
+All you need is:
+
+- .env
+
+- compose.yml
+
+- init-dav.sh (to initiate the Postgres database)
+
+- Makefile (if you want shortcuts for managing your stack)
+
+**2. Configure your domains**
 
 Edit `.env` and fill in your domains and an email address for Let's Encrypt:
 
@@ -54,7 +79,7 @@ DAV_DOMAIN=dav.yourdomain.com
 ACME_EMAIL=you@yourdomain.com
 ```
 
-**2. Create secrets**
+**3. Create secrets**
 
 All secrets are read from files in `./secrets/`. Create the directory and populate each file:
 
@@ -121,7 +146,7 @@ echo -n "your-secret-value" > secrets/db_password
   
   - BGG API Key: if you want to import games from boardgamesgeek
 
-**3. Configure mail (optional)**
+**4. Configure mail (optional)**
 
 Set the Mailgun values in `.env` if you want outgoing email:
 
@@ -131,21 +156,21 @@ MAIL_FROM_ADDRESS=hello@yourdomain.com
 MAIL_FROM_NAME=Solyto
 ```
 
-**4. Start**
+**5. Start**
 
 ```sh
 docker compose up -d
 ```
 
-**5. Create first user**
+**6. Create first user**
 
-```php
+```sh
 docker exec -it solyto-api php artisan app:user:create
 ```
 
 *Please note: if you changed the project name via `.env`, please do also adjust the container name in this command.*
 
-## ## Networks
+## Networks
 
 The compose file uses three networks to limit service exposure:
 
@@ -202,38 +227,27 @@ restic -r "$REPO" forget --keep-last 7 --prune \
 echo "All done."
 ```
 
-## Running with a reverse proxy
+## Running with an external reverse proxy
 
-**Traefik**
+Traefik is included in the stack and handles routing and TLS automatically. If you prefer to use your own reverse proxy (e.g. Caddy), remove the `traefik` service from `compose.yml` and point your proxy at the internal ports directly:
 
-If you are running solyto behind a Traefik reverse proxy, just add normal Traefik labels to the default containers. Example for the API container:
+- API: `8080`
+- DAV: `8081`
+- App: `3000`
 
-```yml
-labels:
-      - traefik.enable=true
-      - traefik.docker.network=web
-      - traefik.http.routers.${PROJECT_NAME}.entrypoints=websecure
-      - traefik.http.routers.${PROJECT_NAME}.rule=Host(`api.yourdomain.com`) || Host(`dav.yourdomain.com`)
-      - traefik.http.routers.${PROJECT_NAME}.tls=true
-      - traefik.http.routers.${PROJECT_NAME}.tls.certresolver=leresolver
-      - traefik.http.services.${PROJECT_NAME}.loadbalancer.server.port=${LISTEN_PORT}
-```
-
-**Caddy**
-
-If you are running solyto behind a Caddy reverse proxy, make sure to redirect to the correct ports in `etc/caddy/Caddyfile`. Example:
+Example Caddyfile:
 
 ```
 api.yourdomain.com {
-    reverse_proxy 10.0.1.8:80
+    reverse_proxy localhost:8080
 }
 
 dav.yourdomain.com {
-    reverse_proxy 10.0.1.8:80
+    reverse_proxy localhost:8081
 }
 
 app.yourdomain.com {
-    reverse_proxy 10.0.1.8:3000
+    reverse_proxy localhost:3000
 }
 ```
 
