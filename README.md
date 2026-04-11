@@ -97,7 +97,7 @@ secrets/
 ├── solyto_bot_webhook_token
 ├── solyto_bot_telegram_token
 ├── hardcover_api_key
-├── openai_api_key
+├── ai_api_key
 ├── mailgun_secret
 ├── vapid_public_key
 ├── vapid_private_key
@@ -138,7 +138,7 @@ echo -n "your-secret-value" > secrets/db_password
   
   - Hardcover API Key: if you want to be able to import books from Hardcover directly
   
-  - OpenAI API Key: if you want music / book recommendations via a lean LLM call
+  - AI API Key (`ai_api_key`): if you want music / book recommendations. Works with OpenAI or any OpenAI-compatible provider (e.g. IONOS AI Model Hub). Set `AI_BASE_URL` and `AI_MODEL` in `.env` to point at your preferred provider.
   
   - Mailgun Secret: if you need email functionality
   

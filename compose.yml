@@ -84,7 +84,7 @@ services:
       SOLYTO_BOT_WEBHOOK_TOKEN_FILE: /run/secrets/solyto_bot_webhook_token
       SOLYTO_BOT_TELEGRAM_TOKEN_FILE: /run/secrets/solyto_bot_telegram_token
       HARDCOVER_API_KEY_FILE: /run/secrets/hardcover_api_key
-      OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      AI_API_KEY_FILE: /run/secrets/ai_api_key
       VAPID_PUBLIC_KEY_FILE: /run/secrets/vapid_public_key
       VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
       MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
@@ -101,7 +101,7 @@ services:
       - solyto_bot_webhook_token
       - solyto_bot_telegram_token
       - hardcover_api_key
-      - openai_api_key
+      - ai_api_key
       - mailgun_secret
       - vapid_private_key
       - vapid_public_key
@@ -313,8 +313,8 @@ secrets:
     file: ./secrets/solyto_bot_telegram_token
   hardcover_api_key:
     file: ./secrets/hardcover_api_key
-  openai_api_key:
-    file: ./secrets/openai_api_key
+  ai_api_key:
+    file: ./secrets/ai_api_key
   mailgun_secret:
     file: ./secrets/mailgun_secret
   vapid_public_key:
