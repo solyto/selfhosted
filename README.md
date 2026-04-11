@@ -138,7 +138,7 @@ echo -n "your-secret-value" > secrets/db_password
   
   - Hardcover API Key: if you want to be able to import books from Hardcover directly
   
-  - AI API Key (`ai_api_key`): if you want music / book recommendations. Works with OpenAI or any OpenAI-compatible provider (e.g. IONOS AI Model Hub). Set `AI_BASE_URL` and `AI_MODEL` in `.env` to point at your preferred provider.
+  - AI API Key (`ai_api_key`): if you want music / book recommendations. Works with OpenAI or any OpenAI-compatible provider (e.g. IONOS AI Model Hub). Set `AI_BASE_URL` and `AI_MODEL` in `.env` to point at your preferred provider. This is the only AI feature solyto has. We have looked at others, but didn't find them to be useful. We are also trying to replace the AI recommendations with something more sophisticated and AI-less.
   
   - Mailgun Secret: if you need email functionality
   
