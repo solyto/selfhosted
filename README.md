@@ -251,6 +251,8 @@ app.yourdomain.com {
 }
 ```
 
+If you use an external reverse proxy, set `TRUSTED_PROXIES` in `.env` to your proxy's IP address. This ensures rate limiting works correctly and clients are identified by their real IP rather than the proxy's IP.
+
 ## Updates
 
 If you run our dockerhub images, just pull the newest image and restart the stack. All necessary migrations will be run automatically.
