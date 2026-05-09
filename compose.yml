@@ -208,6 +208,19 @@ services:
     networks:
       - public
 
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    container_name: ${PROJECT_NAME}-imgproxy
+    environment:
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /images
+      IMGPROXY_KEY: ${IMGPROXY_KEY}
+      IMGPROXY_SALT: ${IMGPROXY_SALT}
+    volumes:
+      - ./storage/:/images:ro
+    networks:
+      - api
+    restart: unless-stopped
+
   mariadb:
     image: mariadb:${MARIADB_VERSION}
     container_name: ${PROJECT_NAME}-mariadb
