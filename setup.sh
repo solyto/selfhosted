@@ -79,6 +79,8 @@ echo "Setting up optional secrets (empty by default)..."
 
 write_empty "solyto_bot_webhook_token"
 write_empty "solyto_bot_telegram_token"
+write_empty "imgproxy_key"
+write_empty "imgproxy_salt"
 write_empty "hardcover_api_key"
 write_empty "openai_api_key"
 write_empty "mailgun_secret"

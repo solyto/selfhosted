@@ -28,17 +28,18 @@ Solyto is relatively light in resource usage. You should be able to run it on a 
 
 ## Services
 
-| Service    | Image              | Description                            |
-| ---------- | ------------------ | -------------------------------------- |
-| `traefik`  | `traefik`          | Reverse proxy, TLS termination         |
-| `nginx`    | `solyto/api-nginx` | Web server / reverse proxy for the API |
-| `api`      | `solyto/api-php`   | Laravel PHP-FPM application            |
-| `dav`      | `solyto/api-php`   | WebDAV service (separate PHP config)   |
-| `queue`    | `solyto/api-php`   | Laravel queue worker                   |
-| `app`      | `solyto/app`       | Frontend app                           |
-| `mariadb`  | `mariadb`          | Primary database for the API           |
-| `postgres` | `postgres`         | Database for the DAV service           |
-| `redis`    | `redis`            | Cache and queue backend                |
+| Service    | Image                   | Description                            |
+| ---------- | ----------------------- | -------------------------------------- |
+| `traefik`  | `traefik`               | Reverse proxy, TLS termination         |
+| `nginx`    | `solyto/api-nginx`      | Web server / reverse proxy for the API |
+| `api`      | `solyto/api-php`        | Laravel PHP-FPM application            |
+| `dav`      | `solyto/api-php`        | WebDAV service (separate PHP config)   |
+| `queue`    | `solyto/api-php`        | Laravel queue worker                   |
+| `app`      | `solyto/app`            | Frontend app                           |
+| `mariadb`  | `mariadb`               | Primary database for the API           |
+| `postgres` | `postgres`              | Database for the DAV service           |
+| `redis`    | `redis`                 | Cache and queue backend                |
+| `imgproxy` | `darthsim/imgproxy` *(optional)* | High-performance image processing. Not required — solyto defaults to local image processing without it. |
 
 ## 
 
@@ -101,7 +102,9 @@ secrets/
 ├── mailgun_secret
 ├── vapid_public_key
 ├── vapid_private_key
-└── bgg_api_key
+├── bgg_api_key
+├── imgproxy_key          # optional, see imgproxy section below
+└── imgproxy_salt         # optional, see imgproxy section below
 ```
 
 Each file should contain just the secret value, no trailing newline. Example:
@@ -145,6 +148,8 @@ echo -n "your-secret-value" > secrets/db_password
   - Vapid Keys: if you want to use solyto as a Progressive Web App with Push Notifications
   
   - BGG API Key: if you want to import games from boardgamesgeek
+  
+  - imgproxy keys (`imgproxy_key`, `imgproxy_salt`): if you want to use imgproxy for image processing instead of the default local processing. imgproxy is not required — solyto works out of the box without it. If you do want to use it, generate two 64-character hex strings (`openssl rand -hex 32`), write them to the secret files, and set `IMAGE_DRIVER=imgproxy` in `.env`.
 
 **4. Configure mail (optional)**
 
