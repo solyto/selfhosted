@@ -161,7 +161,19 @@ If you want to use Dev Requests as a local feedback board for your own users, se
 PUBLIC_DISABLE_DEV_REQUESTS=false
 ```
 
-**5. Configure mail (optional)**
+**5. Configure legal links (optional)**
+
+The legal notice button in the navigation is hidden by default on self-hosted instances. If you want to link your users to your own imprint, privacy policy, or terms of service, set any combination of these in `.env`:
+
+```env
+PUBLIC_LEGAL_NOTICE_URL=https://yourdomain.com/imprint
+PUBLIC_PRIVACY_URL=https://yourdomain.com/privacy
+PUBLIC_TERMS_URL=https://yourdomain.com/terms
+```
+
+Only the links you set will appear. The button stays hidden if none are set.
+
+**6. Configure mail (optional)**
 
 Set the Mailgun values in `.env` if you want outgoing email:
 
@@ -171,13 +183,13 @@ MAIL_FROM_ADDRESS=hello@yourdomain.com
 MAIL_FROM_NAME=Solyto
 ```
 
-**6. Start**
+**7. Start**
 
 ```sh
 docker compose up -d
 ```
 
-**7. Create first user**
+**8. Create first user**
 
 ```sh
 docker exec -it solyto-api php artisan app:user:create
