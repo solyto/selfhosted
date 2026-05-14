@@ -151,7 +151,17 @@ echo -n "your-secret-value" > secrets/db_password
   
   - imgproxy keys (`imgproxy_key`, `imgproxy_salt`): if you want to use imgproxy for image processing instead of the default local processing. imgproxy is not required — solyto works out of the box without it. If you do want to use it, generate two 64-character hex strings (`openssl rand -hex 32`), write them to the secret files, and set `IMAGE_DRIVER=imgproxy` in `.env`.
 
-**4. Configure mail (optional)**
+**4. Configure Dev Requests (optional)**
+
+Dev Requests is disabled by default on self-hosted instances. Submissions would stay on your local server and never reach the solyto team, which would be confusing. The feature is therefore hidden from the navigation automatically.
+
+If you want to use Dev Requests as a local feedback board for your own users, set this in `.env`:
+
+```env
+PUBLIC_DISABLE_DEV_REQUESTS=false
+```
+
+**5. Configure mail (optional)**
 
 Set the Mailgun values in `.env` if you want outgoing email:
 
@@ -161,13 +171,13 @@ MAIL_FROM_ADDRESS=hello@yourdomain.com
 MAIL_FROM_NAME=Solyto
 ```
 
-**5. Start**
+**6. Start**
 
 ```sh
 docker compose up -d
 ```
 
-**6. Create first user**
+**7. Create first user**
 
 ```sh
 docker exec -it solyto-api php artisan app:user:create
