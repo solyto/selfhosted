@@ -104,7 +104,8 @@ secrets/
 ├── vapid_private_key
 ├── bgg_api_key
 ├── imgproxy_key          # optional, see imgproxy section below
-└── imgproxy_salt         # optional, see imgproxy section below
+├── imgproxy_salt         # optional, see imgproxy section below
+└── tmdb_access_token     # optional, see TMDB section below
 ```
 
 Each file should contain just the secret value, no trailing newline. Example:
@@ -150,6 +151,8 @@ echo -n "your-secret-value" > secrets/db_password
   - BGG API Key: if you want to import games from boardgamesgeek
   
   - imgproxy keys (`imgproxy_key`, `imgproxy_salt`): if you want to use imgproxy for image processing instead of the default local processing. imgproxy is not required — solyto works out of the box without it. If you do want to use it, generate two 64-character hex strings (`openssl rand -hex 32`), write them to the secret files, and set `IMAGE_DRIVER=imgproxy` in `.env`.
+  
+  - TMDB Access Token (`tmdb_access_token`): if you want movie & series release notifications and trailers. Get a free Read Access Token from [themoviedb.org](https://www.themoviedb.org/settings/api) after creating an account.
 
 **4. Configure Dev Requests (optional)**
 

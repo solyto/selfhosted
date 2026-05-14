@@ -89,6 +89,7 @@ services:
       VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
       MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
       BGG_API_KEY_FILE: /run/secrets/bgg_api_key
+      TMDB_ACCESS_TOKEN_FILE: /run/secrets/tmdb_access_token
       IMGPROXY_KEY_FILE: /run/secrets/imgproxy_key
       IMGPROXY_SALT_FILE: /run/secrets/imgproxy_salt
     volumes:
@@ -108,6 +109,7 @@ services:
       - vapid_private_key
       - vapid_public_key
       - bgg_api_key
+      - tmdb_access_token
       - imgproxy_key
       - imgproxy_salt
     restart: unless-stopped
@@ -173,6 +175,7 @@ services:
       SOLYTO_BOT_WEBHOOK_TOKEN_FILE: /run/secrets/solyto_bot_webhook_token
       SOLYTO_BOT_TELEGRAM_TOKEN_FILE: /run/secrets/solyto_bot_telegram_token
       HARDCOVER_API_KEY_FILE: /run/secrets/hardcover_api_key
+      TMDB_ACCESS_TOKEN_FILE: /run/secrets/tmdb_access_token
       VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
       MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
       IMGPROXY_KEY_FILE: /run/secrets/imgproxy_key
@@ -189,6 +192,7 @@ services:
       - solyto_bot_webhook_token
       - solyto_bot_telegram_token
       - hardcover_api_key
+      - tmdb_access_token
       - mailgun_secret
       - vapid_private_key
       - imgproxy_key
@@ -347,6 +351,8 @@ secrets:
     file: ./secrets/vapid_private_key
   bgg_api_key:
     file: ./secrets/bgg_api_key
+  tmdb_access_token:
+    file: ./secrets/tmdb_access_token
   imgproxy_key:
     file: ./secrets/imgproxy_key
   imgproxy_salt:
