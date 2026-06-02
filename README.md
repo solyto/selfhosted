@@ -186,16 +186,26 @@ MAIL_FROM_ADDRESS=hello@yourdomain.com
 MAIL_FROM_NAME=Solyto
 ```
 
-**7. Start**
+**7. Configure security (optional)**
+
+If you want to change the default security policies, you can do so with these 3 flags:
+
+```env
+PASSWORD_MIN_LENGTH=12
+PASSWORD_UNCOMPROMISED=true
+EMAIL_CONFIRMATION=true
+```
+
+**8. Start**
 
 ```sh
 docker compose up -d
 ```
 
-**8. Create first user**
+**9. Create first user**
 
 ```sh
-docker exec -it solyto-api php artisan app:user:create
+docker exec -it solyto-api so user:create
 ```
 
 *Please note: if you changed the project name via `.env`, please do also adjust the container name in this command.*
