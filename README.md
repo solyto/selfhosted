@@ -205,7 +205,7 @@ docker compose up -d
 **9. Create first user**
 
 ```sh
-docker exec -it solyto-api so user:create
+docker exec -it solyto-api so users:create
 ```
 
 *Please note: if you changed the project name via `.env`, please do also adjust the container name in this command.*
