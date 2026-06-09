@@ -249,7 +249,6 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     secrets:
       - mariadb_user
       - mariadb_password
@@ -274,7 +273,6 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
       - ./init-dav.sh:/docker-entrypoint-initdb.d/init-dav.sh:ro
     secrets:
       - postgres_root_password
