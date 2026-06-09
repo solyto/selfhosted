@@ -69,8 +69,6 @@ write_secret "db_user"               "$DB_USER"
 write_secret "db_password"           "$DB_PASSWORD"
 write_secret "dav_db_user"           "$DAV_DB_USER"
 write_secret "dav_db_password"       "$DAV_DB_PASSWORD"
-write_secret "mariadb_user"          "$DB_USER"
-write_secret "mariadb_password"      "$DB_PASSWORD"
 write_secret "mariadb_root_password" "$(generate_password)"
 write_secret "postgres_root_password" "$(generate_password)"
 

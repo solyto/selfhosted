@@ -244,14 +244,14 @@ services:
     environment:
       MARIADB_DATABASE: ${DB_DATABASE}
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
-      MARIADB_USER_FILE: /run/secrets/mariadb_user
-      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
+      MARIADB_USER_FILE: /run/secrets/db_user
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
     volumes:
       - mariadb_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     secrets:
-      - mariadb_user
-      - mariadb_password
+      - db_user
+      - db_password
       - mariadb_root_password
     networks:
       - db
@@ -315,10 +315,6 @@ networks:
 
 
 secrets:
-  mariadb_user:
-    file: ./secrets/mariadb_user
-  mariadb_password:
-    file: ./secrets/mariadb_password
   mariadb_root_password:
     file: ./secrets/mariadb_root_password
   postgres_root_password:
