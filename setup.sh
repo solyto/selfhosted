@@ -2,13 +2,18 @@
 
 set -e
 
+# Numeric UID/GID of www-data inside the solyto/api-php containers. Numeric so it
+# works on hosts without a www-data user (Arch, Fedora, macOS, ...).
+SOLYTO_UID="${SOLYTO_UID:-33}"
+SOLYTO_GID="${SOLYTO_GID:-33}"
+
 echo "Cloning solyto/selfhosted..."
 git clone --depth 1 https://github.com/solyto/selfhosted.git solyto
 cd solyto
 rm -f LICENSE README.md setup.sh
 mkdir -p storage
 mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
-chown -R www-data:www-data storage/
+chown -R "${SOLYTO_UID}:${SOLYTO_GID}" storage/
 
 echo ""
 echo "Configure domains and email for TLS certificates:"

@@ -55,6 +55,8 @@ curl -fsSL "https://raw.githubusercontent.com/solyto/selfhosted/main/setup.sh?$(
 
 Run this command to run the install script. It will clone all relevant files to solyto/, ask you for your domains and set everything up. After doing this, all you have to do is `cd` into solyto/ and run `make start` or `docker compose up -d`.
 
+> **Note on `storage/` ownership:** the script runs `chown -R 33:33 storage/`, because 33 is the UID/GID of `www-data` inside the containers (it doesn't matter whether your host has a `www-data` user). Changing ownership usually needs root, so run the script as root or pipe it to `sudo bash` instead of `bash`. If you need a different UID/GID, set `SOLYTO_UID` / `SOLYTO_GID` (e.g. `... | sudo SOLYTO_UID=1000 SOLYTO_GID=1000 bash`). To fix ownership by hand later: `sudo chown -R 33:33 solyto/storage`.
+
 ### Do things manually
 
 **1. Copy relevant files from this repository to your server**
