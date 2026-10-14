@@ -107,7 +107,9 @@ secrets/
 ├── bgg_api_key
 ├── imgproxy_key          # optional, see imgproxy section below
 ├── imgproxy_salt         # optional, see imgproxy section below
-└── tmdb_access_token     # optional, see TMDB section below
+├── tmdb_access_token     # optional, see TMDB section below
+├── ntfy_topic            # optional, see ntfy below
+└── ntfy_token            # optional, see ntfy below
 ```
 
 Each file should contain just the secret value, no trailing newline. Example:
@@ -155,6 +157,8 @@ echo -n "your-secret-value" > secrets/db_password
   - imgproxy keys (`imgproxy_key`, `imgproxy_salt`): if you want to use imgproxy for image processing instead of the default local processing. imgproxy is not required — solyto works out of the box without it. If you do want to use it, generate two 64-character hex strings (`openssl rand -hex 32`), write them to the secret files, and set `IMAGE_DRIVER=imgproxy` in `.env`.
   
   - TMDB Access Token (`tmdb_access_token`): if you want movie & series release notifications and trailers. Get a free Read Access Token from [themoviedb.org](https://www.themoviedb.org/settings/api) after creating an account.
+  
+  - ntfy (`ntfy_topic`, `ntfy_token`): if you want admin notifications for your instance via [ntfy](https://ntfy.sh). Set `NTFY_URL` in `.env` to your ntfy server URL and write the topic to `secrets/ntfy_topic`. `ntfy_token` is only needed if your topic is protected. ntfy is off unless both `NTFY_URL` and `ntfy_topic` are set. There is no default server, so the instance makes no outbound calls to ntfy until you configure it.
 
 **4. Configure Dev Requests (optional)**
 
