@@ -201,13 +201,44 @@ PASSWORD_UNCOMPROMISED=true
 EMAIL_CONFIRMATION=true
 ```
 
-**8. Start**
+**8. Configure API guards (optional)**
+
+These settings are off or have safe defaults, so you don't need to set them. Add them to `.env` only if you want to change the behaviour.
+
+<u>Minimum app version</u>
+
+```env
+MIN_CLIENT_VERSION=1.0.15
+```
+
+When set, requests to logged-in endpoints from an app older than this version are rejected with HTTP 426 ("Please update the app."). Login and the health check are not affected. This means that users on an older app can still sign in, but nothing else works until they update.
+
+- Empty or unset (the default) turns the check off.
+- The app sends its version in the `X-Client-Version` header. Requests without this header are always allowed.
+- Versions are compared numerically, so `1.0.9` is lower than `1.0.10`.
+
+> **Warning:** never set this higher than the app version you actually deploy. Otherwise every user is locked out.
+
+<u>Traffic alerts</u>
+
+```env
+API_TRAFFIC_ALERT_THRESHOLD=300
+API_TRAFFIC_ALERT_COOLDOWN=3600
+```
+
+The API watches how many requests each logged-in user sends. If a single user sends more than `API_TRAFFIC_ALERT_THRESHOLD` requests within one minute (default `300`), an alert is raised. After an alert, that user won't trigger another one for `API_TRAFFIC_ALERT_COOLDOWN` seconds (default `3600`, i.e. one hour).
+
+- This only observes traffic. Requests are never blocked or slowed down.
+- Each alert writes a warning line to `storage/logs/traffic.log`, with the user ID, the request count and the route.
+- Push alerts to admins are sent via ntfy only (not mail or Telegram). This repository doesn't set up ntfy yet, so for now the log line is the only place alerts show up.
+
+**9. Start**
 
 ```sh
 docker compose up -d
 ```
 
-**9. Create first user**
+**10. Create first user**
 
 ```sh
 docker exec -it solyto-api so users:create
