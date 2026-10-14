@@ -100,7 +100,6 @@ secrets/
 ├── solyto_bot_webhook_token
 ├── solyto_bot_telegram_token
 ├── hardcover_api_key
-├── ai_api_key
 ├── mailgun_secret
 ├── vapid_public_key
 ├── vapid_private_key
@@ -146,7 +145,7 @@ echo -n "your-secret-value" > secrets/db_password
   
   - Hardcover API Key: if you want to be able to import books from Hardcover directly
   
-  - AI API Key (`ai_api_key`): if you want music / book recommendations. Works with OpenAI or any OpenAI-compatible provider (e.g. IONOS AI Model Hub). Set `AI_BASE_URL` and `AI_MODEL` in `.env` to point at your preferred provider. This is the only AI feature solyto has. We have looked at others, but didn't find them to be useful. We are also trying to replace the AI recommendations with something more sophisticated and AI-less.
+  - AI recommendations (music / books) are now configured per user in the app (plugin settings), so no instance-level secret is needed. Existing installs can delete `secrets/ai_api_key`; leaving it in place is harmless. `AI_BASE_URL` and `AI_MODEL` in `.env` are no longer read and are ignored.
   
   - Mailgun Secret: if you need email functionality
   
