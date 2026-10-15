@@ -69,6 +69,8 @@ All you need is:
 
 - init-dav.sh (to initiate the Postgres database)
 
+- php/ (PHP-FPM settings for the api, dav and queue services — required, `compose.yml` mounts these directly)
+
 - Makefile (if you want shortcuts for managing your stack)
 
 **2. Configure your domains**
@@ -198,7 +200,7 @@ If you want to change the default security policies, you can do so with these 3 
 ```env
 PASSWORD_MIN_LENGTH=12
 PASSWORD_UNCOMPROMISED=true
-EMAIL_CONFIRMATION=true
+EMAIL_CONFIRMATION=false
 ```
 
 **8. Configure API guards (optional)**
