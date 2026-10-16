@@ -90,8 +90,6 @@ write_empty "mailgun_secret"
 write_empty "vapid_public_key"
 write_empty "vapid_private_key"
 write_empty "bgg_api_key"
-write_empty "ntfy_topic"
-write_empty "ntfy_token"
 
 echo ""
 echo "Done. Run: cd solyto && docker compose up -d"

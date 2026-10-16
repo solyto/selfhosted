@@ -91,8 +91,6 @@ services:
       TMDB_ACCESS_TOKEN_FILE: /run/secrets/tmdb_access_token
       IMGPROXY_KEY_FILE: /run/secrets/imgproxy_key
       IMGPROXY_SALT_FILE: /run/secrets/imgproxy_salt
-      NTFY_TOPIC_FILE: /run/secrets/ntfy_topic
-      NTFY_TOKEN_FILE: /run/secrets/ntfy_token
     volumes:
       - ./storage/:/var/www/storage/
     secrets:
@@ -111,8 +109,6 @@ services:
       - tmdb_access_token
       - imgproxy_key
       - imgproxy_salt
-      - ntfy_topic
-      - ntfy_token
     restart: unless-stopped
     networks:
       - api
@@ -180,8 +176,6 @@ services:
       MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
       IMGPROXY_KEY_FILE: /run/secrets/imgproxy_key
       IMGPROXY_SALT_FILE: /run/secrets/imgproxy_salt
-      NTFY_TOPIC_FILE: /run/secrets/ntfy_topic
-      NTFY_TOKEN_FILE: /run/secrets/ntfy_token
     volumes:
       - ./storage/:/var/www/storage/
     secrets:
@@ -198,8 +192,6 @@ services:
       - vapid_private_key
       - imgproxy_key
       - imgproxy_salt
-      - ntfy_topic
-      - ntfy_token
     restart: unless-stopped
     networks:
       - api
@@ -352,7 +344,3 @@ secrets:
     file: ./secrets/imgproxy_key
   imgproxy_salt:
     file: ./secrets/imgproxy_salt
-  ntfy_topic:
-    file: ./secrets/ntfy_topic
-  ntfy_token:
-    file: ./secrets/ntfy_token
