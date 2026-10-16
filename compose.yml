@@ -95,7 +95,6 @@ services:
       NTFY_TOKEN_FILE: /run/secrets/ntfy_token
     volumes:
       - ./storage/:/var/www/storage/
-      - ./php/app.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
     secrets:
       - db_user
       - db_password
@@ -140,7 +139,6 @@ services:
       APP_KEY_FILE: /run/secrets/app_key
     volumes:
       - ./storage/:/var/www/storage/
-      - ./php/dav.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
     secrets:
       - db_user
       - db_password
@@ -186,7 +184,6 @@ services:
       NTFY_TOKEN_FILE: /run/secrets/ntfy_token
     volumes:
       - ./storage/:/var/www/storage/
-      - ./php/queue.php.ini:/usr/local/etc/php/conf.d/solyto-php.ini:ro
     secrets:
       - db_user
       - db_password

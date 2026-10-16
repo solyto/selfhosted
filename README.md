@@ -69,8 +69,6 @@ All you need is:
 
 - init-dav.sh (to initiate the Postgres database)
 
-- php/ (PHP-FPM settings for the api, dav and queue services — required, `compose.yml` mounts these directly)
-
 - Makefile (if you want shortcuts for managing your stack)
 
 **2. Configure your domains**
