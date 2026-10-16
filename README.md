@@ -232,7 +232,7 @@ The API watches how many requests each logged-in user sends. If a single user se
 
 - This only observes traffic. Requests are never blocked or slowed down.
 - Each alert writes a warning line to `storage/logs/traffic.log`, with the user ID, the request count and the route.
-- Push alerts to admins are sent via ntfy only (not mail or Telegram). This repository doesn't set up ntfy yet, so for now the log line is the only place alerts show up.
+- Push alerts to admins are sent via ntfy only (not mail or Telegram), if you set it up in step 3. Without ntfy, the log line is the only place alerts show up.
 
 **9. Start**
 
