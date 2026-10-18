@@ -337,7 +337,45 @@ If you use an external reverse proxy, set `TRUSTED_PROXIES` in `.env` to your pr
 
 ## Updates
 
-If you run our dockerhub images, just pull the newest image and restart the stack. All necessary migrations will be run automatically.
+solyto never updates on its own. `make start`, `make restart` and `docker compose up -d` keep using the images already on your server, so a restart alone does **not** update anything. Updates only happen when you run `make update`.
+
+**1. Back up your data.** Database migrations run automatically when the new version starts, and some of them can't be undone. See [Backups](#backups).
+
+**2. Read the release notes** at [github.com/solyto/api/releases](https://github.com/solyto/api/releases). They list anything you need to do by hand.
+
+**3. Get the newest stack files.**
+
+If you used the install script, your `solyto/` folder is a git clone:
+
+```sh
+git pull
+```
+
+If `git pull` refuses because you changed `.env`, keep your changes like this:
+
+```sh
+git stash && git pull && git stash pop
+```
+
+If you copied the files by hand, compare your `compose.yml` with the one in this repository and take over any changes.
+
+**4. Pull the new images and restart:**
+
+```sh
+make update
+```
+
+This runs `docker compose pull` and `docker compose up -d`. Without the Makefile, run these two commands yourself.
+
+<u>Which version you get</u>
+
+`SOLYTO_VERSION` in `.env` decides which images are pulled. With the default `latest`, `make update` always brings you to the newest release. If you'd rather choose when to move to a new version, set a specific version instead, for example:
+
+```env
+SOLYTO_VERSION=1.1.0
+```
+
+To upgrade, change the version and run `make update`. All versions are listed on [Docker Hub](https://hub.docker.com/r/solyto/api-php/tags).
 
 ## Downgrades
 
