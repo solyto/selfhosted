@@ -345,17 +345,14 @@ solyto never updates on its own. `make start`, `make restart` and `docker compos
 
 **3. Get the newest stack files.**
 
-If you used the install script, your `solyto/` folder is a git clone:
+If you used the install script, your `solyto/` folder is a git clone. Run this inside it:
 
 ```sh
-git pull
-```
-
-If `git pull` refuses because you changed `.env`, keep your changes like this:
-
-```sh
+git checkout -- LICENSE README.md setup.sh
 git stash && git pull && git stash pop
 ```
+
+The first line restores files that older versions of the install script deleted; it's harmless if they're already there. `git stash` keeps your own changes to `.env` (like your domains) while pulling, and puts them back afterwards.
 
 If you copied the files by hand, compare your `compose.yml` with the one in this repository and take over any changes.
 
