@@ -193,13 +193,16 @@ MAIL_FROM_NAME=Solyto
 
 **7. Configure security (optional)**
 
-If you want to change the default security policies, you can do so with these 3 flags:
+If you want to change the default security policies, you can do so with these 4 flags:
 
 ```env
 PASSWORD_MIN_LENGTH=12
 PASSWORD_UNCOMPROMISED=true
 EMAIL_CONFIRMATION=true
+ACCOUNT_DELETION_CONFIRMATION=true
 ```
+
+`ACCOUNT_DELETION_CONFIRMATION` controls self-service account deletion (Settings → Security → Delete account). When it is `true` (the default) and mail is configured (step 6), users get an email with a confirmation link that is valid for 60 minutes. Their account is only deleted after they open the link and confirm. If the flag is `false`, or mail isn't configured, the account is deleted right after the user confirms a warning, enters their current password and types `DELETE`. When the flag is `true` but mail is missing, the API logs a warning. Deletion is permanent and removes all of the user's data. Super admins can't delete themselves this way.
 
 **8. Configure API guards (optional)**
 
