@@ -10,7 +10,6 @@ SOLYTO_GID="${SOLYTO_GID:-33}"
 echo "Cloning solyto/selfhosted..."
 git clone --depth 1 https://github.com/solyto/selfhosted.git solyto
 cd solyto
-rm -f LICENSE README.md setup.sh
 mkdir -p storage
 mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
 chown -R "${SOLYTO_UID}:${SOLYTO_GID}" storage/
@@ -90,8 +89,6 @@ write_empty "mailgun_secret"
 write_empty "vapid_public_key"
 write_empty "vapid_private_key"
 write_empty "bgg_api_key"
-write_empty "ntfy_topic"
-write_empty "ntfy_token"
 
 echo ""
-echo "Done. Run: cd solyto && docker compose up -d"
+echo "Done. Run: cd solyto && make start"

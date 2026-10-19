@@ -106,9 +106,7 @@ secrets/
 ├── bgg_api_key
 ├── imgproxy_key          # optional, see imgproxy section below
 ├── imgproxy_salt         # optional, see imgproxy section below
-├── tmdb_access_token     # optional, see TMDB section below
-├── ntfy_topic            # optional, see ntfy below
-└── ntfy_token            # optional, see ntfy below
+└── tmdb_access_token     # optional, see TMDB section below
 ```
 
 Each file should contain just the secret value, no trailing newline. Example:
@@ -156,8 +154,6 @@ echo -n "your-secret-value" > secrets/db_password
   - imgproxy keys (`imgproxy_key`, `imgproxy_salt`): if you want to use imgproxy for image processing instead of the default local processing. imgproxy is not required — solyto works out of the box without it. If you do want to use it, generate two 64-character hex strings (`openssl rand -hex 32`), write them to the secret files, and set `IMAGE_DRIVER=imgproxy` in `.env`.
   
   - TMDB Access Token (`tmdb_access_token`): if you want movie & series release notifications and trailers. Get a free Read Access Token from [themoviedb.org](https://www.themoviedb.org/settings/api) after creating an account.
-  
-  - ntfy (`ntfy_topic`, `ntfy_token`): if you want admin notifications for your instance via [ntfy](https://ntfy.sh). Set `NTFY_URL` in `.env` to your ntfy server URL and write the topic to `secrets/ntfy_topic`. `ntfy_token` is only needed if your topic is protected. ntfy is off unless both `NTFY_URL` and `ntfy_topic` are set. There is no default server, so the instance makes no outbound calls to ntfy until you configure it.
 
 **4. Configure Dev Requests (optional)**
 
@@ -198,7 +194,7 @@ If you want to change the default security policies, you can do so with these 4 
 ```env
 PASSWORD_MIN_LENGTH=12
 PASSWORD_UNCOMPROMISED=true
-EMAIL_CONFIRMATION=true
+EMAIL_CONFIRMATION=false
 ACCOUNT_DELETION_CONFIRMATION=true
 ```
 
@@ -233,7 +229,17 @@ The API watches how many requests each logged-in user sends. If a single user se
 
 - This only observes traffic. Requests are never blocked or slowed down.
 - Each alert writes a warning line to `storage/logs/traffic.log`, with the user ID, the request count and the route.
-- Push alerts to admins are sent via ntfy only (not mail or Telegram). This repository doesn't set up ntfy yet, so for now the log line is the only place alerts show up.
+- Push alerts to admins are sent via ntfy only (not mail or Telegram), if you set it up (see below). Without ntfy, the log line is the only place alerts show up.
+
+<u>Admin notifications via ntfy</u>
+
+```env
+NTFY_URL=https://ntfy.sh
+NTFY_TOPIC=your-topic
+NTFY_TOKEN=
+```
+
+If you want admin notifications for your instance via [ntfy](https://ntfy.sh) (new registrations, dev requests, traffic alerts), add these to `.env`. `NTFY_TOKEN` is only needed if your topic is protected. ntfy is off unless both `NTFY_URL` and `NTFY_TOPIC` are set. There is no default server, so the instance makes no outbound calls to ntfy until you configure it.
 
 **9. Start**
 
@@ -334,7 +340,42 @@ If you use an external reverse proxy, set `TRUSTED_PROXIES` in `.env` to your pr
 
 ## Updates
 
-If you run our dockerhub images, just pull the newest image and restart the stack. All necessary migrations will be run automatically.
+solyto never updates on its own. `make start`, `make restart` and `docker compose up -d` keep using the images already on your server, so a restart alone does **not** update anything. Updates only happen when you run `make update`.
+
+**1. Back up your data.** Database migrations run automatically when the new version starts, and some of them can't be undone. See [Backups](#backups).
+
+**2. Read the release notes** at [github.com/solyto/api/releases](https://github.com/solyto/api/releases). They list anything you need to do by hand.
+
+**3. Get the newest stack files.**
+
+If you used the install script, your `solyto/` folder is a git clone. Run this inside it:
+
+```sh
+git checkout -- LICENSE README.md setup.sh
+git stash && git pull && git stash pop
+```
+
+The first line restores files that older versions of the install script deleted; it's harmless if they're already there. `git stash` keeps your own changes to `.env` (like your domains) while pulling, and puts them back afterwards.
+
+If you copied the files by hand, compare your `compose.yml` with the one in this repository and take over any changes.
+
+**4. Pull the new images and restart:**
+
+```sh
+make update
+```
+
+This runs `docker compose pull` and `docker compose up -d`. Without the Makefile, run these two commands yourself.
+
+<u>Which version you get</u>
+
+`SOLYTO_VERSION` in `.env` decides which images are pulled. With the default `latest`, `make update` always brings you to the newest release. If you'd rather choose when to move to a new version, set a specific version instead, for example:
+
+```env
+SOLYTO_VERSION=1.1.0
+```
+
+To upgrade, change the version and run `make update`. All versions are listed on [Docker Hub](https://hub.docker.com/r/solyto/api-php/tags).
 
 ## Downgrades
 
