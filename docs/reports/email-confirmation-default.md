@@ -1,6 +1,7 @@
 # Report: default value of `EMAIL_CONFIRMATION`
 
 date: 2026-10-14
+read: true
 job: show (`feature/show_email-confirmation-default-vlaue`)
 
 ## Question
