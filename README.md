@@ -22,7 +22,7 @@ The only thing your server needs is docker & docker compose. The rest is done in
 
 **Hardware Requirements**
 
-Solyto is relatively light in resource usage. You should be able to run it on a Raspberry Pi no problem. Any other VPS, cloud server or root server will be more than fine.
+Solyto is relatively light in resource usage. You should be able to run it on a Raspberry Pi no problem (64-bit OS required, so Raspberry Pi 3/4/5; 32-bit Raspberry Pi OS won't work). Any other VPS, cloud server or root server will be more than fine.
 
 ## 
 
@@ -250,7 +250,7 @@ docker compose up -d
 **10. Create first user**
 
 ```sh
-docker exec -it solyto-api so users:create
+docker exec -it solyto-api php artisan app:users:create
 ```
 
 *Please note: if you changed the project name via `.env`, please do also adjust the container name in this command.*
