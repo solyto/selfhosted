@@ -53,7 +53,7 @@ You have two options regarding setup. Either go through steps manually or run ou
 curl -fsSL "https://raw.githubusercontent.com/solyto/selfhosted/main/setup.sh?$(date +%s)" | bash
 ```
 
-Run this command to run the install script. It will clone all relevant files to solyto/, ask you for your domains and set everything up. After doing this, all you have to do is `cd` into solyto/ and run `make start` or `docker compose up -d`.
+Run this command to run the install script. It will clone all relevant files to solyto/, ask you for your domains and set everything up. After doing this, all you have to do is `cd` into solyto/ and run `make start` or `docker compose up -d`. Then set up the cron job for [scheduled tasks](#scheduled-tasks).
 
 > **Note on `storage/` ownership:** the script runs `chown -R 33:33 storage/`, because 33 is the UID/GID of `www-data` inside the containers (it doesn't matter whether your host has a `www-data` user). Changing ownership usually needs root, so run the script as root or pipe it to `sudo bash` instead of `bash`. If you need a different UID/GID, set `SOLYTO_UID` / `SOLYTO_GID` (e.g. `... | sudo SOLYTO_UID=1000 SOLYTO_GID=1000 bash`). To fix ownership by hand later: `sudo chown -R 33:33 solyto/storage`.
 
@@ -231,6 +231,32 @@ The API watches how many requests each logged-in user sends. If a single user se
 - Each alert writes a warning line to `storage/logs/traffic.log`, with the user ID, the request count and the route.
 - Push alerts to admins are sent via ntfy only (not mail or Telegram), if you set it up (see below). Without ntfy, the log line is the only place alerts show up.
 
+<u>External calendars</u>
+
+```env
+CALENDARS_EXTERNAL_TIMEOUT=5
+CALENDARS_EXTERNAL_CACHE_TTL=300
+CALENDARS_EXTERNAL_MAX_RESPONSE_BYTES=10485760
+CALENDARS_EXTERNAL_UNAVAILABLE_TTL=300
+```
+
+These apply to calendars that users connect from their own CalDAV server (Nextcloud, iCloud, …). All times are in seconds.
+
+- `CALENDARS_EXTERNAL_TIMEOUT` (default `5`): how long the API waits for the user's server, both to connect and for an answer.
+- `CALENDARS_EXTERNAL_CACHE_TTL` (default `300`): how long the API keeps a calendar's state before asking the server again. Changes made directly on the user's server can take this long to show up in solyto.
+- `CALENDARS_EXTERNAL_MAX_RESPONSE_BYTES` (default `10485760`, i.e. 10 MB): the largest answer accepted from a server, counted after decompression.
+- `CALENDARS_EXTERNAL_UNAVAILABLE_TTL` (default `300`): after a server fails, how long it is treated as unavailable before the API tries again. This keeps one slow server from slowing down everything else.
+
+<u>Feeds</u>
+
+```env
+FEEDS_MAX_SUBSCRIPTIONS=1000
+```
+
+The maximum number of feeds a single user can follow (default `1000`). It applies to adding feeds by hand and to OPML imports.
+
+> **Note:** feeds and CalDAV servers on a local network or on the server itself (private, loopback and link-local addresses) are always refused, and there is no setting to allow them.
+
 <u>Admin notifications via ntfy</u>
 
 ```env
@@ -239,7 +265,7 @@ NTFY_TOPIC=your-topic
 NTFY_TOKEN=
 ```
 
-If you want admin notifications for your instance via [ntfy](https://ntfy.sh) (new registrations, dev requests, traffic alerts), add these to `.env`. `NTFY_TOKEN` is only needed if your topic is protected. ntfy is off unless both `NTFY_URL` and `NTFY_TOPIC` are set. There is no default server, so the instance makes no outbound calls to ntfy until you configure it.
+If you want admin notifications for your instance via [ntfy](https://ntfy.sh) (a daily summary of new registrations at 08:00, dev requests, traffic alerts), add these to `.env`. `NTFY_TOKEN` is only needed if your topic is protected. ntfy is off unless both `NTFY_URL` and `NTFY_TOPIC` are set. There is no default server, so the instance makes no outbound calls to ntfy until you configure it.
 
 **9. Start**
 
@@ -254,6 +280,16 @@ docker exec -it solyto-api php artisan app:users:create
 ```
 
 *Please note: if you changed the project name via `.env`, please do also adjust the container name in this command.*
+
+### Scheduled tasks
+
+solyto runs some tasks on a schedule: the daily reminders (Your Day and check-in), syncing feeds every hour, looking up new music and book releases, scaling covers, cleaning up old feed items, dev requests, friend requests, clipboard entries and expired exports, and the daily summary of new registrations (if ntfy is set up). Nothing in the stack starts these by itself, so add this line to the crontab of the host (`crontab -e`):
+
+```
+* * * * * docker exec solyto-queue php artisan schedule:run >> /dev/null 2>&1
+```
+
+It checks every minute which tasks are due and hands them to the queue container. Without it, no reminders are sent, feeds are never synced in the background and nothing is cleaned up. If you changed the project name via `.env`, adjust the container name here too.
 
 ## Networks
 
