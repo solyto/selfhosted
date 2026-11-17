@@ -172,6 +172,7 @@ services:
       SOLYTO_BOT_TELEGRAM_TOKEN_FILE: /run/secrets/solyto_bot_telegram_token
       HARDCOVER_API_KEY_FILE: /run/secrets/hardcover_api_key
       TMDB_ACCESS_TOKEN_FILE: /run/secrets/tmdb_access_token
+      VAPID_PUBLIC_KEY_FILE: /run/secrets/vapid_public_key
       VAPID_PRIVATE_KEY_FILE: /run/secrets/vapid_private_key
       MAILGUN_SECRET_FILE: /run/secrets/mailgun_secret
       IMGPROXY_KEY_FILE: /run/secrets/imgproxy_key
@@ -190,6 +191,7 @@ services:
       - tmdb_access_token
       - mailgun_secret
       - vapid_private_key
+      - vapid_public_key
       - imgproxy_key
       - imgproxy_salt
     restart: unless-stopped
